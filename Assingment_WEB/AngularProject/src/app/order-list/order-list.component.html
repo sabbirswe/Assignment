@@ -1,0 +1,122 @@
+
+<h1 class="text-center" style="background-color: gainsboro;">ORDER LIST</h1>
+
+<table class="table">
+  
+  <thead>
+    <tr>
+      <td><button  id="newButton" [routerLink]="['/order-info','0']"><fa-icon [icon]="faPlus"></fa-icon> Create</button></td>
+      <td colspan="4"></td>
+
+      <td colspan="3"><input  type="text" id="searchButton" (keydown)="onKeydown($event)" [(ngModel)]="searchOrder"  placeholder="Search"></td>
+    </tr>
+
+    <tr>
+      <th>REF. ID</th>
+      <th>PO NO</th>
+      <th>PO DATE</th>
+      <th>SUPPLIER</th>
+      <th>EX. DATE</th>
+      <th>EDIT</th>
+      <th>DELETE</th>
+      <th>EXPORT</th>
+    </tr>
+   
+  </thead>
+  <tr *ngIf="!orderList || orderList.length === 0">
+    <td colspan="7">
+      <p  class="text-center text-danger">No Data Availabe</p>   
+    </td>
+  </tr>
+  <tbody *ngIf="orderList">
+    <tr *ngFor="let item of orderList | paginate: { itemsPerPage: ps , currentPage: pn, totalItems: total }">
+      <td>{{item.refID}}</td>
+      <td>{{item.poNo}}</td>
+      <td>{{item.poDate | date}}</td>
+      <td>{{item.supplier.supplierName}}</td>
+      <td>{{item.expectedDate | date}}</td>
+     
+      <td><button id="actionButton" [routerLink]="['/order-info',item.orderId]"><fa-icon [icon]="faEdit"></fa-icon> </button></td>
+      <td> <button id="actionButton" (click)="deleteOrder(item.orderId)"><fa-icon [icon]="faTrashAlt"></fa-icon> </button></td>
+      <td> <button id="actionButton" (click)="getOrder(item.orderId)"><fa-icon [icon]="faFileExport"></fa-icon> </button></td>
+      
+    </tr>
+   
+  </tbody>
+</table>
+
+<pagination-controls *ngIf="orderList" style="text-align: center;" (pageChange)="getOrderPage(pn = $event)"></pagination-controls>
+
+
+<div style="display: none;">
+  <div id="content" #content > 
+    <p  style="background-color: gainsboro;text-align: center;font-weight: bold">PURCHASE&nbsp;&nbsp;ORDER</p>
+    <table class="table table-borderless table-responsive" style="font-size: 10px;">
+    
+      <tbody>
+        <tr >
+          <td style="font-weight: bold;width: 150px;text-align: right;">REF. ID:</td>
+          <td > 
+            {{orderModel.refID}}
+          </td>     
+          <td style="font-weight: bold;width: 135px;text-align: right;">PO. NO:</td>
+          <td> 
+            {{orderModel.poNo}}
+          </td>    
+        </tr>
+        <tr >
+          <td style="font-weight: bold;text-align: right;">PO. DATE:</td>
+          <td> 
+            {{orderModel.poDate | date}}
+          </td>
+          <td style="font-weight: bold;text-align: right;">SUPPLIER:</td>    
+          <td> 
+            {{orderModel.supplier.supplierName}}
+          </td>           
+        </tr>
+        <tr style="border-bottom: 5px solid gainsboro">
+          <td style="font-weight: bold;">EXPECTED&nbsp;&nbsp; DATE:</td>
+          <td> 
+            {{orderModel.expectedDate | date}}
+          </td>
+          <td style="font-weight: bold;">REMARK:</td>    
+          <td> 
+            {{orderModel.remark}}
+          </td>           
+        </tr>
+     
+    </tbody>
+    </table>
+  
+    <table class="table table-bordered table-responsive" style="font-size: 10px;">
+    
+      <thead>
+   
+        <tr>
+          <th>ITEM NAME</th>
+          <th style="text-align: center;">QTY.</th>
+          <th style="text-align: center;">RATE ($)</th>
+          
+        </tr>
+      </thead>
+      <tr *ngIf="!orderDetails || orderDetails.length === 0">
+        <td colspan="3">
+          <p  class="text-center text-danger">No Data Availabe</p>   
+        </td>
+      </tr>
+      <tbody *ngIf="orderDetails">
+        <tr *ngFor="let item of orderDetails;">
+          <td>{{item.item.itemName}}</td>
+          <td style="text-align: center;">{{item.qty}}</td>
+          <td style="text-align: center;">{{item.rate}}</td>
+        </tr>
+       
+      </tbody>
+    </table>
+    <P  style="font-size: 6px;text-align: right;"> Print Date: {{printDate | date:'medium'}}</P>
+  </div> 
+</div>
+ 
+
+
+

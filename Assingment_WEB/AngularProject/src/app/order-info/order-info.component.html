@@ -1,0 +1,145 @@
+
+<h2 class="text-center" style="background-color: gainsboro;">PURCHASE ORDER ENTRY FORM</h2>
+
+  <table class="table table-borderless">
+  
+    <tbody>
+      <tr >
+        <td style="font-weight: bold;"><label style="width: 75px;" class="control-label col-sm-2" for="name">REF. ID:<span class="text-danger"> *</span></label></td>
+        <td colspan="1"> 
+          <input type="text" [(ngModel)]="orderModel.refID" class="form-control" id="name"  readonly>        
+        </td>     
+        <td colspan="2"></td> 
+       
+        <td style="font-weight: bold;"><label style="width: 75px;" class="control-label col-sm-2" for="name">PO. NO:<span class="text-danger"> *</span></label></td>
+        <td colspan="2"> 
+          <input type="text" required #name="ngModel" [(ngModel)]="orderModel.poNo" class="form-control" id="name" placeholder="Enter PO. No">        
+          <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert">
+
+            <div *ngIf="name.errors?.required" class="text-danger">
+              Name is required.
+            </div>
+  
+          </div>
+        </td>    
+      
+      </tr>
+      <tr >
+        <td style="font-weight: bold;"><label style="width: 100px;" class="control-label col-sm-2" for="name">PO. DATE:<span class="text-danger"> *</span></label></td>
+        <td colspan=""> 
+          <input id="poDate" name="poDate" [(ngModel)]="orderModel.poDate"
+          type="text" bsDatepicker class="form-control" />
+        </td>     
+        <td style="width: 100px;" colspan="2"></td> 
+
+        <td style="font-weight: bold;"><label style="width: 100px;" class="control-label col-sm-2" for="name">SUPPLIER:<span class="text-danger"> *</span></label></td>
+        <td colspan="2"> 
+          <select [(ngModel)]="orderModel.supplierId" class="form-control" id="sel1">
+            <option *ngFor="let order of suppliers; let i = index" [value]="suppliers[i].supplierId">
+              {{suppliers[i].supplierName}}
+            </option>
+          </select>    
+        </td>  
+       
+</tr>
+<tr style="border-bottom: 5px solid gainsboro">  
+        <td style="font-weight: bold;"><label style="width: 130px;" class="control-label col-sm-2" for="name">EXPECTED DATE:</label></td>
+        <td colspan="1"> 
+          <input id="expectedDate" name="expectedDate" [(ngModel)]="orderModel.expectedDate"
+          type="text" bsDatepicker class="form-control" />
+        </td> 
+        <td colspan="2"></td>  
+        <td style="font-weight: bold;"><label class="control-label col-sm-2" for="name">REMARK:</label></td>
+        <td colspan="2">    <textarea class="form-control" [(ngModel)]="orderModel.remark" id="description" rows="3" placeholder="Enter Remark"></textarea> </td>       
+  </tr>
+  </tbody></table>
+<table class="table table-borderless">  
+  <tbody>
+<tr>
+  <td style="width: 100px;"></td>
+  <td style="text-align: right;font-weight: bold;"><label style="width: 65px;" class="control-label col-sm-2" for="name">ITEM:<span class="text-danger"> *</span></label></td>
+        <td> 
+          <div class="ng-autocomplete">
+            <ng-autocomplete 
+              [data]="items"
+              [searchKeyword]='keyword'
+              (selected)='selectEvent($event)'
+              (inputChanged)='onChangeSearch($event)'
+              [itemTemplate]="itemTemplate"
+              [notFoundTemplate]="notFoundTemplate"
+              [formControl] = "itemName">                                 
+            </ng-autocomplete>
+            
+            <ng-template #itemTemplate let-item>
+            <a [innerHTML]="item.itemName"></a>
+            </ng-template>
+            
+            <ng-template #notFoundTemplate let-notFound>
+            <div [innerHTML]="notFound"></div>
+            </ng-template>
+            </div>
+
+          <!-- <input type="text" [(ngModel)]="orderDetailModel.itemName" class="form-control" id="name" placeholder="Enter Name">         -->
+        </td>     
+        <td style="text-align: right;font-weight: bold;"><label style="width: 65px;" class="control-label col-sm-2" for="name">QTY.:<span class="text-danger"> *</span></label></td>
+        <td> 
+          <input type="number"  [(ngModel)]="orderDetailModel.qty" class="form-control" id="name" >        
+        </td> 
+        <td style="text-align: right;font-weight: bold;"><label style="width: 65px;" class="control-label col-sm-2" for="name">RATE:<span class="text-danger"> *</span></label></td>
+        <td> 
+          <input type="number"  [(ngModel)]="orderDetailModel.rate" class="form-control" id="name" placeholder="$">        
+        </td> 
+        <td style="width: 50px;"></td>
+        <td>
+          <button (click)="saveOrderDetail()" ><fa-icon [icon]="faPlus"></fa-icon></button>
+        </td>
+</tr>    
+
+
+    </tbody>
+  </table>
+
+
+  <table class="table table-hover">
+  
+    <thead>
+ 
+      <tr>
+        <th>ITEM NAME</th>
+        <th>QTY.</th>
+        <th>RATE ($)</th>
+        <th>EDIT</th>
+        <th>DELETE</th>
+        
+      </tr>
+    </thead>
+    <tr *ngIf="!orderDetails || orderDetails.length === 0">
+      <td colspan="3">
+        <p  class="text-center text-danger">No Item Added</p>   
+      </td>
+    </tr>
+    <tbody *ngIf="orderDetails">
+      <tr *ngFor="let item of orderDetails;">
+        <td>{{item.item.itemName}}</td>
+        <td>{{item.qty}}</td>
+        <td>{{item.rate}}</td>
+        <td><button id="actionButton" (click)="editOrderDetail(item)"><fa-icon [icon]="faEdit"></fa-icon></button></td>
+        <td> <button id="actionButton" (click)="deleteOrderDetail(item.orderDetailId)"><fa-icon [icon]="faTrashAlt"></fa-icon></button></td>
+        
+      </tr>
+     
+    </tbody>
+  </table>
+
+
+  
+  <div class="form-group" style="float: right;margin-left: 2%;">
+    <button routerLink="/" class="btn btn-lg btn-danger" >CLOSE</button>
+  </div>
+
+  <div class="form-group" style="float: right;">
+    <button type="submit" class="btn btn-lg btn-success" (click)="saveData()">SAVE</button>
+  </div>
+  <p class="text-center text-danger" *ngIf="message != null || message !=undefined"><strong>{{message}}</strong></p>
+
+
